@@ -14,6 +14,10 @@ exporters:
     endpoint: jaeger:4317
     tls:
       insecure: true
+  otlphttp:
+    endpoint: https://otlp.nr-data.net:443
+    headers:
+      api-key: b2d7f0b6b84e5edbfa7fc3beb219f780FFFFNRAL
 
 processors:
   batch: {}
@@ -27,8 +31,12 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug, otlp]
+      exporters: [debug, otlp, otlphttp]
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug]
+      exporters: [debug, otlphttp]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlphttp]

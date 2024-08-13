@@ -11,16 +11,37 @@ import { B3InjectEncoding, B3Propagator } from '@opentelemetry/propagator-b3';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc';
+import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-grpc';
+import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
+import {
+  LoggerProvider,
+  BatchLogRecordProcessor,
+} from '@opentelemetry/sdk-logs';
+import { OTLPLogExporter } from '@opentelemetry/exporter-logs-otlp-grpc';
 
 import * as process from 'process';
 
 diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.ERROR);
+
+const loggerExporter = new OTLPLogExporter({
+  url: 'http://localhost:4317',
+});
+const loggerProvider = new LoggerProvider();
+
+loggerProvider.addLogRecordProcessor(
+  new BatchLogRecordProcessor(loggerExporter),
+);
 
 const otelSDK = new NodeSDK({
   serviceName: 'node-ms',
   contextManager: new AsyncLocalStorageContextManager(),
   traceExporter: new OTLPTraceExporter({
     url: 'http://localhost:4317',
+  }),
+  metricReader: new PeriodicExportingMetricReader({
+    exporter: new OTLPMetricExporter({
+      url: 'http://localhost:4317',
+    }),
   }),
   textMapPropagator: new CompositePropagator({
     propagators: [
