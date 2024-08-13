@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { OpenTelemetryModule } from 'nestjs-otel';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { HttpModule } from '@nestjs/axios';
 
 const OpenTelemetryModuleConfig = OpenTelemetryModule.forRoot({
   metrics: {
@@ -20,7 +21,7 @@ const OpenTelemetryModuleConfig = OpenTelemetryModule.forRoot({
 });
 
 @Module({
-  imports: [OpenTelemetryModuleConfig],
+  imports: [OpenTelemetryModuleConfig, HttpModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -22,6 +22,7 @@ public class StudentService {
     }
 
     public Student findStudentById(Long id) throws BadRequestException {
+        System.out.println("findStudentById " + id);
         var student = this.studentRepository.findById(id);
         if (student.isPresent()) {
             return student.get();

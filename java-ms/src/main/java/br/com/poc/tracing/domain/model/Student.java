@@ -7,10 +7,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
+import lombok.NoArgsConstructor;
 import jakarta.persistence.Id;
 
 @Entity
 @Table(name = "student")
+@NoArgsConstructor()
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +25,10 @@ public class Student {
     public Student(String name) {
         this.name = name;
         this.registration = LocalDateTime.now().toString();
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {

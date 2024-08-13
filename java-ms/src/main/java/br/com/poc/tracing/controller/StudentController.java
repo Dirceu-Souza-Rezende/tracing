@@ -5,19 +5,23 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.poc.tracing.domain.dto.StudentDTO;
 import br.com.poc.tracing.domain.model.Student;
 import br.com.poc.tracing.service.StudentService;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 
 import org.apache.coyote.BadRequestException;
-import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
 @RequestMapping("/student")
+@Log4j2
 public class StudentController {
     private final StudentService studentService;
 
@@ -38,15 +42,15 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Student> findStudent(@Param("id") Long id) {
+    public ResponseEntity findStudent(@PathVariable("id") Long id) {
         try {
             var response = this.studentService.findStudentById(id);
             return ResponseEntity.ok(response);
         } catch (BadRequestException e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.badRequest().build();
+            log.error("Error de BadRequest" + e.getMessage());
+            return ResponseEntity.status(HttpStatusCode.valueOf(404)).body(e.getMessage());
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error("Error de Exception" + e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
     }
