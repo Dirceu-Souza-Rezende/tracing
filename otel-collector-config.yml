@@ -21,6 +21,11 @@ exporters:
 
 processors:
   batch: {}
+  filter/1:
+    metrics:
+      exclude:
+        match_type: strict
+        metric_names: ["go.memstats.alloc", "go.memstats.heap_alloc", "go.memstats.heap_idle"]
 
 extensions:
   health_check: {}
